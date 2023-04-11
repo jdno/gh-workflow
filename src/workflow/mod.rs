@@ -1,5 +1,7 @@
 use std::fmt::{Display, Formatter};
 
+use crate::name;
+
 pub use self::builder::WorkflowBuilder;
 
 mod builder;
@@ -17,12 +19,38 @@ mod builder;
 /// time someone opens a new issue.
 ///
 /// -- [GitHub Actions Documentation](https://docs.github.com/en/actions/using-workflows/about-workflows)
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-pub struct Workflow {}
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+pub struct Workflow {
+    name: Option<WorkflowName>,
+}
+
+name!(
+    /// # The name of a workflow
+    ///
+    /// GitHub displays the names of your workflows on your repository's "Actions" tab. If you omit
+    /// it, GitHub sets it to the workflow file path relative to the root of the repository.
+    WorkflowName
+);
+
+impl Workflow {
+    /// Returns the name of the workflow
+    pub fn name(&self) -> &Option<WorkflowName> {
+        &self.name
+    }
+
+    /// Sets the name of the workflow
+    pub fn set_name(&mut self, name: WorkflowName) {
+        self.name = Some(name);
+    }
+}
 
 impl Display for Workflow {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Workflow")
+        if let Some(name) = &self.name {
+            return write!(f, "{}", name);
+        }
+
+        write!(f, "<unnamed workflow>")
     }
 }
 
@@ -31,9 +59,37 @@ mod tests {
     use super::*;
 
     #[test]
-    fn trait_display() {
-        let workflow = Workflow {};
-        assert_eq!("Workflow", workflow.to_string());
+    fn name() {
+        let workflow = Workflow {
+            name: Some("workflow".into()),
+        };
+
+        assert_eq!(&Some(WorkflowName::new("workflow")), workflow.name());
+    }
+
+    #[test]
+    fn set_name() {
+        let mut workflow = Workflow { name: None };
+
+        workflow.set_name(WorkflowName::new("workflow"));
+
+        assert_eq!(&Some(WorkflowName::new("workflow")), workflow.name());
+    }
+
+    #[test]
+    fn trait_display_with_name() {
+        let workflow = Workflow {
+            name: Some("workflow".into()),
+        };
+
+        assert_eq!("workflow", workflow.to_string());
+    }
+
+    #[test]
+    fn trait_display_without_name() {
+        let workflow = Workflow { name: None };
+
+        assert_eq!("<unnamed workflow>", workflow.to_string());
     }
 
     #[test]
