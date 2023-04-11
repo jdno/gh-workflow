@@ -1,6 +1,8 @@
-# 🚀 My Personal Template Repository
+# Rust Struct for GitHub Actions Workflows
 
-This is a [template repository] for my personal projects.
+This project implements a Rust representation of the GitHub Actions
+[workflow syntax]. It can be used to read and write workflows for GitHub Actions
+in Rust.
 
 ## License
 
@@ -17,4 +19,4 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
 
-[template repository]: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
+[workflow syntax]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
