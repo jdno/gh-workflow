@@ -20,8 +20,12 @@ mod builder;
 ///
 /// -- [GitHub Actions Documentation](https://docs.github.com/en/actions/using-workflows/about-workflows)
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Workflow {
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     name: Option<WorkflowName>,
+
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     run_name: Option<WorkflowRunName>,
 }
 
@@ -77,6 +81,8 @@ impl Display for Workflow {
 
 #[cfg(test)]
 mod tests {
+    use indoc::indoc;
+
     use super::*;
 
     #[test]
@@ -121,6 +127,37 @@ mod tests {
         workflow.set_run_name(WorkflowRunName::new("workflow"));
 
         assert_eq!(&Some(WorkflowRunName::new("workflow")), workflow.run_name());
+    }
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn trait_deserialize() {
+        let workflow = indoc! {r#"
+            ---
+            name: name
+        "#};
+
+        let workflow: Workflow = serde_yaml::from_str(workflow).unwrap();
+
+        assert_eq!(Some(WorkflowName::new("name")), workflow.name);
+    }
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn trait_serialize() {
+        let workflow = Workflow {
+            name: Some("name".into()),
+            ..Default::default()
+        };
+
+        let workflow = serde_yaml::to_string(&workflow).unwrap();
+
+        assert_eq!(
+            workflow,
+            indoc! {r#"
+            name: name
+        "#}
+        );
     }
 
     #[test]

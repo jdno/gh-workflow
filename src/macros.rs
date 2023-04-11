@@ -21,6 +21,7 @@ macro_rules! name {
     ) => {
         $(#[$meta])*
         #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+        #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
         pub struct $name(String);
 
         impl $name {
