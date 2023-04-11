@@ -1,0 +1,19 @@
+---
+name: Ansible
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - "ansible"
+  pull_request:
+    paths:
+      - "ansible"
+
+jobs:
+  lint:
+    name: Lint
+    uses: jdno/workflows/.github/workflows/ansible-lint.yml@main
+    with:
+      path: "ansible"

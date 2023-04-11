@@ -1,0 +1,34 @@
+---
+name: TypeScript
+
+"on":
+  pull_request:
+    paths-ignore:
+      - "package.json"
+      - "package-lock.json"
+      - "**.ts"
+
+jobs:
+  lint:
+    name: Lint / Lint code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip check
+        run: echo "No matching files - skipping check"
+
+  style:
+    name: Style / Check style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip check
+        run: echo "No matching files - skipping check"
+
+  test:
+    name: Test / Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip check
+        run: echo "No matching files - skipping check"
