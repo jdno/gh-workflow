@@ -1,5 +1,6 @@
-use crate::WorkflowName;
 use std::fmt::{Display, Formatter};
+
+use crate::{WorkflowName, WorkflowRunName};
 
 /// Builder for Workflows
 ///
@@ -10,6 +11,7 @@ use std::fmt::{Display, Formatter};
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 pub struct WorkflowBuilder {
     name: Option<WorkflowName>,
+    run_name: Option<WorkflowRunName>,
 }
 
 impl WorkflowBuilder {
@@ -21,6 +23,12 @@ impl WorkflowBuilder {
     /// Sets the name of the workflow
     pub fn name(mut self, name: WorkflowName) -> Self {
         self.name = Some(name);
+        self
+    }
+
+    /// Sets the run-name of the workflow
+    pub fn run_name(mut self, run_name: WorkflowRunName) -> Self {
+        self.run_name = Some(run_name);
         self
     }
 }
@@ -39,9 +47,28 @@ mod tests {
     use super::*;
 
     #[test]
+    fn name() {
+        let mut builder = WorkflowBuilder::new();
+
+        builder = builder.name(WorkflowName::new("workflow"));
+
+        assert_eq!(Some(WorkflowName::new("workflow")), builder.name);
+    }
+
+    #[test]
+    fn run_name() {
+        let mut builder = WorkflowBuilder::new();
+
+        builder = builder.run_name(WorkflowRunName::new("workflow"));
+
+        assert_eq!(Some(WorkflowRunName::new("workflow")), builder.run_name);
+    }
+
+    #[test]
     fn trait_display_with_name() {
         let workflow_builder = WorkflowBuilder {
             name: Some("workflow".into()),
+            ..Default::default()
         };
 
         assert_eq!("WorkflowBuilder for workflow", workflow_builder.to_string());
