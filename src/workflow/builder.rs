@@ -1,3 +1,4 @@
+use crate::WorkflowName;
 use std::fmt::{Display, Formatter};
 
 /// Builder for Workflows
@@ -6,19 +7,30 @@ use std::fmt::{Display, Formatter};
 /// fields of a [`Workflow`], and then a [`build`] method to construct the [`Workflow`]. The method
 /// returns a [`Result`] that is [`Ok`] if the [`Workflow`] was successfully constructed, and an
 /// [`Err`] if mandatory fields for the the [`Workflow`] were missing.
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-pub struct WorkflowBuilder {}
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+pub struct WorkflowBuilder {
+    name: Option<WorkflowName>,
+}
 
 impl WorkflowBuilder {
-    /// Create a new WorkflowBuilder
+    /// Creates a new WorkflowBuilder
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Sets the name of the workflow
+    pub fn name(mut self, name: WorkflowName) -> Self {
+        self.name = Some(name);
+        self
     }
 }
 
 impl Display for WorkflowBuilder {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "WorkflowBuilder")
+        match &self.name {
+            Some(name) => write!(f, "WorkflowBuilder for {}", name),
+            None => write!(f, "WorkflowBuilder"),
+        }
     }
 }
 
@@ -27,8 +39,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn trait_display() {
-        let workflow_builder = WorkflowBuilder {};
+    fn trait_display_with_name() {
+        let workflow_builder = WorkflowBuilder {
+            name: Some("workflow".into()),
+        };
+
+        assert_eq!("WorkflowBuilder for workflow", workflow_builder.to_string());
+    }
+
+    #[test]
+    fn trait_display_without_name() {
+        let workflow_builder = WorkflowBuilder::new();
+
         assert_eq!("WorkflowBuilder", workflow_builder.to_string());
     }
 
